@@ -1,0 +1,18 @@
+services:
+  irc_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "12345-12444:12345-12444"
+    volumes:
+      - ./ascii_art:/irc_bot/ascii_art
+      - ./chatter.log:/irc_bot/chatter.log
+      - ./trolldb.b64:/irc_bot/trolldb.b64
+      - ./admins.toml:/irc_bot/admins.toml
+      - ./config.toml:/irc_bot/config.toml
+      - ./bot_modules:/irc_bot/bot_modules
+    command: ["python3", "main.py"]
+    tty: true  # This keeps the container running and allows interactive mode
+    environment:
+      - PYTHONUNBUFFERED=1  # Optional: Useful for Python logging
