@@ -73,7 +73,7 @@ def _get_system_prompt():
 
 async def handle_query(msg) -> str:
     messages = [
-        {"role": "system", "content": system_prompt},  # Custom system prompt
+        {"role": "system", "content": _get_system_prompt()},  # Custom system prompt
         {"role": "user", "content": msg}  # User's message
     ]
     client = ollama.AsyncClient()
