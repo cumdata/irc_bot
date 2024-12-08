@@ -7,6 +7,33 @@ import ollama
 
 import nooscope_rpc.api as api
 
+# BEGIN COLORS
+WHITE = '00'
+BLACK = '01'
+BLUE = '02'
+GREEN = '03'
+RED = '04'
+BROWN = '05'
+PURPLE = '06'
+ORANGE = '07'
+YELLOW = '08'
+LIME = '09'
+TEAL = '10'
+CYAN = '11'
+LIGHT_BLUE = '12'
+PINK = '13'
+GREY = '14'
+SILVER = '15'
+
+# SPECIAL
+BLUE_TWITTER = '47'
+
+CONTROL_COLOR = '\x03'
+BOLD = '\x02'
+UNDERLINE = '\x1F'
+ITALIC = '\x1D'
+# END COLORS
+
 
 model = "mistral-nemo"
 chat_history = []
@@ -34,7 +61,7 @@ Here is the chat history which may contain between 0 to 100:
 {history}
 </chat_history>
 
-Respond with just a message.
+Respond with just a message. Do not put the message in quotes.
 """
 
 
@@ -99,6 +126,22 @@ async def handle_query(msg) -> str:
         return "Error processing your request"  # Return a default error message
 
 
+def colorize(text, fg, bg=None):
+    """Colorizes text
+
+    :param str text: text to colorize
+    :param str fg: foreground color code (see colors above)
+    :param str|None bg: background color code (see colors above)
+
+    :returns: colorized text
+    :rtype: str
+    """
+    if not bg:
+        return f'{CONTROL_COLOR}{fg}{text}{CONTROL_COLOR}'
+    else:
+        return f'{CONTROL_COLOR}{fg},{bg}{text}{CONTROL_COLOR}'
+
+
 class ChatBot(api.IrcImpl):
     """LLM Chat plugin"""
 
@@ -112,16 +155,22 @@ class ChatBot(api.IrcImpl):
         """
         try:
             print(target, by, message)
+            if CONTROL_COLOR in message:
+                print("message contained ctrl char")
+                return
+
             _add_history(by, message)
+
             if message.startswith("zheani ") or message.startswith("zheani: "):
                 user_query = message.replace('zheani ', '').replace('zheani: ', '')
                 full_message = await handle_query(user_query)
+                full_message = colorize(full_message, fg=PINK)
                 await self.rpc.send_message(target, full_message)
+
             elif message.startswith('dieplz'):
                 await self.rpc.disconnect()
                 exit(1)  # Ideally handle exit more gracefully
         except Exception as e:
-
             print(f"Error processing message from {by}: {e}")
 
 
