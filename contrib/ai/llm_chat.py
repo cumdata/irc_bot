@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import os
 import re
 
@@ -7,33 +8,70 @@ import ollama
 import nooscope_rpc.api as api
 
 
-history = []
+model = "mistral-nemo"
+chat_history = []
 
-system_prompt = f"""
-You are a chatter on IRC. You are to respond but keep your responses brief 
-and blend in with the chat room. Make sure to answer any technical questions.
-If the user is asking a technical question ignore the chat_history and answer
-their question instead.
+system_prompt = """
+You are a midwit who is all about that helter skelter back and forth banter. \n
+You are to respond to users but keep your responses brief and on topic with the most recent chat messages. \n
+If someone is bothering you, make fun of them and use the chat history as ammo. \n
 
+Provided in <chat_history> is the last 100 messages from users in the IRC channel 
+with the oldest messages first.\n
 
-Here are some previous chats from uses to get a sense of the chatroom:
+The chat history contains the timestamp | user | message. \n
+Here is an example of the structure of chat_history: \n
+
+<example>
+1733696912838 | tinky | i love lasers! they are awesome\n
+1733697110835 | baxter | shut up nerd\n
+1733697209622 | play_games | yea shut up nerd lol\n
+<example>\n
+
+Here is the chat history which may contain between 0 to 100:
 
 <chat_history>
 {history}
 </chat_history>
 
+Respond with just a message.
 """
 
 
-def add_history(user, msg):
-    history.append(
-        {'USER': user, 'MESSAGE': msg}
+def _ts() -> int:
+    """make now timestamp"""
+    return int(datetime.datetime.utcnow().timestamp() * 1000)
+
+
+def _add_history(user: str, msg: str):
+    """Add history
+
+    :param str user: the user
+    :param str msg: the message
+    """
+    chat_history.append(
+        f"{_ts()} | {user} | {msg}"
     )
-    if len(history) > 100:
-        history.pop(0)
+    if len(chat_history) > 100:
+        chat_history.pop(0)
 
 
-async def handle_query(msg):
+def _format_history() -> str:
+    """Returns the history
+
+    :returns: formatted chat history
+    """
+    fmt_history = "\n".join(chat_history)
+    print(fmt_history)
+    return fmt_history
+
+
+def _get_system_prompt():
+    """Returns the system prompt"""
+    return system_prompt.format(history=_format_history())
+
+
+async def handle_query(msg) -> str:
     messages = [
         {"role": "system", "content": system_prompt},  # Custom system prompt
         {"role": "user", "content": msg}  # User's message
@@ -44,7 +82,7 @@ async def handle_query(msg):
     try:
         # Perform the chat call with streaming enabled
         parts = await client.chat(
-            model='llama3.1',
+            model=model,
             messages=messages,
             stream=True
         )
@@ -74,7 +112,7 @@ class ChatBot(api.IrcImpl):
         """
         try:
             print(target, by, message)
-            add_history(by, message)
+            _add_history(by, message)
             if message.startswith("zheani ") or message.startswith("zheani: "):
                 user_query = message.replace('zheani ', '').replace('zheani: ', '')
                 full_message = await handle_query(user_query)
