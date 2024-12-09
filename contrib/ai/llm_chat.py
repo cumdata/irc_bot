@@ -143,6 +143,10 @@ def colorize(text, fg, bg=None):
         return f'{CONTROL_COLOR}{fg},{bg}{text}{CONTROL_COLOR}'
 
 
+def _post_fix(m: str) -> str:
+    return m.lstrip('"').rstrip('"')
+
+
 class ChatBot(api.IrcImpl):
     """LLM Chat plugin"""
 
@@ -166,7 +170,7 @@ class ChatBot(api.IrcImpl):
                 user_query = message.replace('zheani ', '').replace('zheani: ', '')
                 full_message = await handle_query(user_query)
                 full_message = colorize(full_message, fg=PINK)
-                await self.rpc.send_message(target, full_message)
+                await self.rpc.send_message(target, _post_fix(full_message))
 
             elif message.startswith('dieplz'):
                 await self.rpc.disconnect()
