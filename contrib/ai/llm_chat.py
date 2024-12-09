@@ -144,7 +144,7 @@ def colorize(text, fg, bg=None):
 
 
 def _post_fix(m: str) -> str:
-    return m.lstrip('"').rstrip('"')
+    return m.lstrip('\"').rstrip('\"')
 
 
 class ChatBot(api.IrcImpl):
