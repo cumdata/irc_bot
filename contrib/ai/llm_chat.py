@@ -55,7 +55,7 @@ Here is an example of the structure of chat_history: \n
 1733697209622 | play_games | yea shut up nerd lol\n
 <example>\n
 
-Here is the chat history which may contain between 0 to 100: \n
+Here is the chat history which may contain between 0 to 10 entries: \n
 
 <chat_history>
 {history}
