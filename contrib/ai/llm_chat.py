@@ -24,6 +24,7 @@ LIGHT_BLUE = '12'
 PINK = '13'
 GREY = '14'
 SILVER = '15'
+NICE_ORANGE = '53'
 
 # SPECIAL
 BLUE_TWITTER = '47'
@@ -174,7 +175,7 @@ class ChatBot(api.IrcImpl):
                 user_query = message.replace('zheani ', '').replace('zheani: ', '')
                 full_message = await handle_query(user_query)
                 full_message = _post_fix(full_message)
-                full_message = colorize(full_message, fg=PINK)
+                full_message = colorize(full_message, fg=NICE_ORANGE)
                 await self.rpc.send_message(target, full_message)
 
             elif message.startswith('dieplz'):
