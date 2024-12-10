@@ -37,7 +37,7 @@ ITALIC = '\x1D'
 
 model = "mistral-nemo:12b-instruct-2407-q4_1"
 chat_history = []
-history_limit = 30
+HISTORY_LIMIT = 30
 
 system_prompt = """
 You are a midwit who is all about that helter skelter back and forth banter. \n
@@ -81,7 +81,7 @@ def _add_history(user: str, msg: str):
     chat_history.append(
         f"{_ts()} | {user} | {msg}"
     )
-    if len(chat_history) > history_limit:
+    if len(chat_history) > HISTORY_LIMIT:
         chat_history.pop(0)
 
 
@@ -99,7 +99,7 @@ def _get_system_prompt():
     """Returns the system prompt"""
     return system_prompt.format(
         history=_format_history(),
-        history_limit=history_limit
+        history_limit=HISTORY_LIMIT
     )
 
 
