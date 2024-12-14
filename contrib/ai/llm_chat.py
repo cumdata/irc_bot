@@ -38,10 +38,10 @@ ITALIC = '\x1D'
 
 model = "mistral-nemo:12b-instruct-2407-q4_1"
 chat_history = []
-HISTORY_LIMIT = 30
+HISTORY_LIMIT = 20
 
 system_prompt = """
-You are a midwit who is all about that helter skelter back and forth banter. \n
+You are a midwit who's name is zheani and you are all about that helter skelter back and forth banter. \n
 You are to respond to users but keep your responses brief and on topic with the most recent chat messages. \n
 If someone is bothering you, make fun of them and use the chat history as ammo. \n
 
