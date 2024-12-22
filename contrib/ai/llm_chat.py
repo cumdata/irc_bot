@@ -175,8 +175,10 @@ class ChatBot(api.IrcImpl):
                 user_query = message.replace('zheani ', '').replace('zheani: ', '')
                 full_message = await handle_query(user_query)
                 full_message = _post_fix(full_message)
-                full_message = colorize(full_message, fg=NICE_ORANGE)
-                await self.rpc.send_message(target, full_message)
+                full_message_pts = full_message.split('\n')
+                for msg in full_message_pts:
+                    msg = colorize(msg, fg=NICE_ORANGE)
+                    await self.rpc.send_message(target, msg)
 
             elif message.startswith('dieplz'):
                 await self.rpc.disconnect()
