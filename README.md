@@ -23,6 +23,13 @@ openssl req -x509 -newkey rsa:2048 -keyout selfsigned.key -nodes -out selfsigned
 ```
 
 ## Building + Running container
+
+<b>Using docker-compose</b>
+```bash
+docker-compose up
+```
+
+<b>Docker build using CLI</b>
 ```bash
 # Build container
 docker build -t <tag> .
